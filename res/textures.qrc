@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tex1.jpg</file>
+        <file>tex2.jpg</file>
+	<file>tex_galaxy.jpg</file>
+	<file>tex_galaxy2.jpg</file>
+	<file>logoTSE.jpg</file>
+    </qresource>
+</RCC>
