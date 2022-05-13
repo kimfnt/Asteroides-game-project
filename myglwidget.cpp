@@ -33,6 +33,9 @@ void MyGLWidget::initializeGL()
     // Activation du zbuffer
     glEnable(GL_DEPTH_TEST);
     myGalaxy=new Galaxy();
+    monVaisseau=new Vaisseau();
+    x = 0;
+    r = 0;
 }
 
 
@@ -58,25 +61,218 @@ void MyGLWidget::paintGL()
 {
     // Reinitialisation des tampons
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // Definition de la position de la camera
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     //gluLookAt(0.0f, 4.f, 4.f, 0.0f, 0.0f, 0.f, 0.0f, 1.0f, 0.0f);
-    gluLookAt(0.0f, 4.0f, 10.1f,
-              0.0f, 0.0f, 0.f,
-              0.0f, 1.0f, 0.0f);
+//    gluLookAt(cameraPos[0],cameraPos[1],cameraPos[2],
+//              cameraPos[0]+cameraFront[0],cameraPos[1]+cameraFront[1],cameraPos[2]+cameraFront[2],
+//              cameraUp[0],cameraUp[1],cameraUp[2]);
+    gluLookAt(vaisseauPos[0]-cameraFront[0],vaisseauPos[1]-cameraFront[1],vaisseauPos[2]-cameraFront[2],
+              vaisseauPos[0],vaisseauPos[1],vaisseauPos[2],
+              cameraUp[0],cameraUp[1],cameraUp[2]);
+    //coord cartésiennes -> sphériques
+    // z = p*sin(teta)*cos(phi)
+    // x = p*sin(teta)*sin(phi)
+    // y = p*cos(teta)
 
-    //glDisable(GL_LIGHTING); // on désactive le lighting pour dessiner la route
-
-    //glEnable(GL_LIGHTING); // on réactive le lighting par la suite
-
-
-    // translation des éléments suivants (voiture, roues, phares) sur l'axe x
-    //glTranslatef(placement, 0.f, 0.f);
+    //coord sphériques -> cartésiennes
+    // p = sqrt(x^2 + y^2 + z^2)
+    // teta = arccos(y/p)
+    // phi = arctan(x/z)
 
     myGalaxy->Display();
 
+//Placer le vaisseau
+    glTranslatef(vaisseauPos[0],vaisseauPos[1],vaisseauPos[2]);
+    glRotatef(-yaw-90,0.0,1.0,0.0);
+    glRotatef(pitch+10,1.0,0.0,0.0);
+    glScaled(0.05,0.05,0.05);
+    glPushMatrix();
+    monVaisseau->Display(0);
+    glPopMatrix();
+
+    /*
+     * Je crois que j'ai pas besoin de ça mais au cas où je le garde ici ça me parait chelou
+    cameraRight[0] = cameraUp[1]*cameraFront[2]-cameraUp[2]*cameraFront[1];
+    cameraRight[1] = cameraUp[2]*cameraFront[0]-cameraUp[0]*cameraFront[2];
+    cameraRight[2] = cameraUp[0]*cameraFront[1]-cameraUp[1]*cameraFront[0];
+    norm = sqrt(cameraRight[0]*cameraRight[0]+cameraRight[1]*cameraRight[1]+cameraRight[2]*cameraRight[2]);
+    cameraRight[0] = cameraRight[0]/norm;
+    cameraRight[1] = cameraRight[1]/norm;
+    cameraRight[2] = cameraRight[2]/norm;
+    glRotatef(-yaw-90,cameraUp[0],cameraUp[1],cameraUp[2]);
+    glRotatef(-pitch,cameraRight[0],cameraRight[1],cameraRight[2]);
+*/
+
 }
 
+// Fonction de gestion d'interactions clavier
+void MyGLWidget::keyPressEvent(QKeyEvent * event)
+{
+    switch(event->key())
+    {
+    // Cas par defaut
+    default:
+    {
+        // Ignorer l'evenement
+        event->ignore();
+        return;
+    }
+    case Qt::Key_Right:
+    {
+        qDebug() <<"droite";
+//        add[0]=cameraFront[1]*cameraUp[2]-cameraFront[2]*cameraUp[1];
+//        add[1]=cameraFront[2]*cameraUp[0]-cameraFront[0]*cameraUp[2];
+//        add[2]=cameraFront[0]*cameraUp[1]-cameraFront[1]*cameraUp[0];
+//        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
+//        cameraPos[0] += add[0]/norm;
+//        cameraPos[1] += add[1]/norm;
+//        cameraPos[2] += add[2]/norm;
+        yaw += 5;
+        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
+        add[1] = sin(pitch*3.14/180);
+        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
+        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
+        cameraFront[0] = add[0]/norm;
+        cameraFront[1] = add[1]/norm;
+        cameraFront[2] = add[2]/norm;
+        break;
+    }
+    case Qt::Key_Left:
+    {
+        qDebug() <<"gauche";
+//        add[0]=cameraFront[1]*cameraUp[2]-cameraFront[2]*cameraUp[1];
+//        add[1]=cameraFront[2]*cameraUp[0]-cameraFront[0]*cameraUp[2];
+//        add[2]=cameraFront[0]*cameraUp[1]-cameraFront[1]*cameraUp[0];
+//        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
+//        cameraPos[0] -= add[0]/norm;
+//        cameraPos[1] -= add[1]/norm;
+//        cameraPos[2] -= add[2]/norm;
+        yaw -= 5;
+        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
+        add[1] = sin(pitch*3.14/180);
+        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
+        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
+        cameraFront[0] = add[0]/norm;
+        cameraFront[1] = add[1]/norm;
+        cameraFront[2] = add[2]/norm;
+        break;
+    }
+    case Qt::Key_Z:
+    {
+        qDebug() <<"go";
+        vaisseauPos[0] += cameraFront[0];
+        vaisseauPos[1] += cameraFront[1];
+        vaisseauPos[2] += cameraFront[2];
+        break;
+    }
+    case Qt::Key_S:
+    {
+        qDebug() <<"back";
+        vaisseauPos[0] -= cameraFront[0];
+        vaisseauPos[1] -= cameraFront[1];
+        vaisseauPos[2] -= cameraFront[2];
+        break;
+    }
+    case Qt::Key_Up:
+    {
+        qDebug() <<"up";
+        pitch += 5;
+        if(pitch > 89.0f){
+            pitch = 89.0f;
+        }
+        if(pitch < -89.0f){
+            pitch = -89.0f;
+        }
+        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
+        add[1] = sin(pitch*3.14/180);
+        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
+        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
+        cameraFront[0] = add[0]/norm;
+        cameraFront[1] = add[1]/norm;
+        cameraFront[2] = add[2]/norm;
+        break;
+    }
+    case Qt::Key_Down:
+    {
+        qDebug() <<"down";
+        pitch -= 5;
+        if(pitch > 89.0f){
+            pitch = 89.0f;
+        }
+        if(pitch < -89.0f){
+            pitch = -89.0f;
+        }
+        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
+        add[1] = sin(pitch*3.14/180);
+        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
+        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
+        cameraFront[0] = add[0]/norm;
+        cameraFront[1] = add[1]/norm;
+        cameraFront[2] = add[2]/norm;
+        break;
+    }
+    }
+
+    // Acceptation de l'evenement et mise a jour de la scene
+    event->accept();
+    update();
+}
+
+void MyGLWidget::keyReleaseEvent(QKeyEvent * event)
+{
+    switch(event->key())
+    {
+    // Cas par defaut
+    default:
+    {
+        // Ignorer l'evenement
+        event->ignore();
+        return;
+    }
+    case Qt::Key_Right:
+    {
+        //qDebug() <<"droite";
+//        if (placement == 0){
+//            placement = 4;
+//        } else if(placement == -4){
+//            placement = 0;
+//        } else {
+//            placement = 4;
+//        }
+        rot_ = 0;
+        break;
+    }
+    case Qt::Key_Left:
+    {
+        //qDebug() <<"gauche";
+//        if (placement == 0){
+//            placement = -4;
+//        } else if(placement == 4){
+//            placement = 0;
+//        } else {
+//            placement = -4;
+//        }
+        rot_ = 0;
+        break;
+    }
+    case Qt::Key_Up:
+    {
+        qDebug() <<"up";
+        move_ = 0;
+        break;
+    }
+    case Qt::Key_Down:
+    {
+        qDebug() <<"down";
+        move_ = 0;
+        break;
+    }
+    }
+
+    // Acceptation de l'evenement et mise a jour de la scene
+    event->accept();
+    update();
+}
 
