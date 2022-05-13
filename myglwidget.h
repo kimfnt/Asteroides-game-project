@@ -26,7 +26,6 @@ protected:
 
     // Fonction de gestion d'interactions clavier
     void keyPressEvent(QKeyEvent* event);
-    void keyReleaseEvent(QKeyEvent* event);
 
 private:
     //Asteroide* myAsteroide={nullptr};
