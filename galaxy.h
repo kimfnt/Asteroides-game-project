@@ -6,12 +6,12 @@
 class Galaxy
 {
 public:
-    Galaxy();
+    Galaxy(int nb);
     ~Galaxy();
     void Display() const;
 
 private:
-    int number =16;
+    int number;
     Asteroide* myAsteroides={nullptr};
     Station* myStation=nullptr;
 

@@ -1,15 +1,17 @@
+#include "menuwindow.h"
+
 #include <QApplication>
-#include "myglwidget.h"
+#include <QFontDatabase>
 
 int main(int argc, char *argv[])
 {
-    // Creation de l'application QT
-    QApplication app(argc, argv);
-    srand (time(NULL));
-    // Creation du widget opengl
-    MyGLWidget glWidget;
-    glWidget.show();
+    // creation de l'application QT
+    QApplication a(argc, argv);
+    srand(time(NULL));
+    // création de la fenêtre de menu
+    MenuWindow w;
+    w.show();
 
-    // Execution de l'application QT
-    return app.exec();
+    // execution de l'application QT
+    return a.exec();
 }

@@ -1,19 +1,20 @@
+#ifndef MYGLWIDGET_H
+#define MYGLWIDGET_H
+
+#include <QOpenGLWidget>
+#include <QTimer>
 #include "asteroide.h"
 #include "galaxy.h"
-#include <QOpenGLWidget>
-#include <QKeyEvent>
-#include <QTimer>
 
-// Classe dediee a l'affichage d'une scene OpenGL
 class MyGLWidget : public QOpenGLWidget
 {
-public:
+    Q_OBJECT
 
+public:
     // Constructeur
     MyGLWidget(QWidget *parent = nullptr);
 
 protected:
-
     // Fonction d'initialisation
     void initializeGL();
 
@@ -23,11 +24,15 @@ protected:
     // Fonction d'affichage
     void paintGL();
 
+private slots:
+    void asteroidsChange(int);
+
 private:
-    //Asteroide* myAsteroide={nullptr};
     Galaxy* myGalaxy=nullptr;
-    //int number = 16;
     float placement = 0;
     float m_TimeElapsed { 0.0f };
     QTimer m_AnimationTimer;
+    int number;
 };
+
+#endif // MYGLWIDGET_H

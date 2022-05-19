@@ -1,7 +1,7 @@
 #include "galaxy.h"
 #include <QImage>
 
-Galaxy::Galaxy()
+Galaxy::Galaxy(int nb)
 {
     m_Galaxy=gluNewQuadric();
 
@@ -16,7 +16,7 @@ Galaxy::Galaxy()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    QImage image_galaxy(":/tex_galaxy2.jpg");
+    QImage image_galaxy(":/tex_galaxy.jpg");
     image_galaxy=image_galaxy.convertToFormat(QImage::Format_RGBA8888);
     glGenTextures(1, &tex_galaxy);
     glBindTexture(GL_TEXTURE_2D, tex_galaxy);
@@ -36,6 +36,7 @@ Galaxy::Galaxy()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+    number=nb;
 
     // création des astéroides
     myAsteroides=new Asteroide[number];
@@ -62,7 +63,6 @@ Galaxy::~Galaxy()
     delete[] myAsteroides;
     myStation->~Station();
     delete myStation;
-
 }
 
 void Galaxy::Display() const

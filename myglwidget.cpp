@@ -1,17 +1,21 @@
 #include "myglwidget.h"
-#include <QApplication>
-#include <cmath>
-#include <algorithm>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+#include <QGuiApplication>
+#include "qscreen.h"
 
 
-// Declarations des constantes
-const unsigned int WIN = 800;
-
-// Constructeur
 MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 {
     // Reglage de la taille/position
-    setFixedSize(WIN, WIN);
+    //setFixedSize(810, 780);
+
+    QRect  screenGeometry= QGuiApplication::primaryScreen()->geometry();
+    int height = screenGeometry.height();
+    int width = screenGeometry.width();
+
+    setFixedSize(width/2, height-100);
 
     // Connexion du timer
     connect(&m_AnimationTimer,  &QTimer::timeout, [&] {
@@ -23,7 +27,6 @@ MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
     m_AnimationTimer.start();
 }
 
-
 // Fonction d'initialisation
 void MyGLWidget::initializeGL()
 {
@@ -32,9 +35,10 @@ void MyGLWidget::initializeGL()
 
     // Activation du zbuffer
     glEnable(GL_DEPTH_TEST);
-    myGalaxy=new Galaxy();
-}
 
+    // creation de la galaxy
+    myGalaxy = new Galaxy(number);
+}
 
 // Fonction de redimensionnement
 void MyGLWidget::resizeGL(int width, int height)
@@ -56,6 +60,36 @@ void MyGLWidget::resizeGL(int width, int height)
 // Fonction d'affichage
 void MyGLWidget::paintGL()
 {
+//    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+//    //gluLookAt(0.0f, 4.f, 4.f, 0.0f, 0.0f, 0.f, 0.0f, 1.0f, 0.0f);
+//    gluLookAt(0.0f, 4.0f, 10.1f,
+//              0.0f, 0.0f, 0.f,
+//              0.0f, 1.0f, 0.0f);
+//        // Resetear transformaciones
+//        glLoadIdentity();
+
+
+//        // LADO IZQUIERDO: lado verde
+//        glBegin(GL_POLYGON);
+
+
+//        glColor3f( 1.0, 0.0, 0.0 );
+//        glVertex3f(  0.5, -0.5, -0.5 );      // P1 es rojo
+//        glColor3f( 0.0, 1.0, 0.0 );
+//        glVertex3f(  0.5,  0.5, -0.5 );      // P2 es verde
+//        glColor3f( 0.0, 0.0, 1.0 );
+//        glVertex3f( -0.5,  0.5, -0.5 );      // P3 es azul
+//        glColor3f( 1.0, 0.0, 1.0 );
+//        glVertex3f( -0.5, -0.5, -0.5 );      // P4 es morado
+
+//        glEnd();
+//        glFlush();
+//        this->makeCurrent();
+
+
     // Reinitialisation des tampons
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -76,7 +110,10 @@ void MyGLWidget::paintGL()
     //glTranslatef(placement, 0.f, 0.f);
 
     myGalaxy->Display();
-
 }
 
+void MyGLWidget::asteroidsChange(int nb)
+{
+    number=nb;
+}
 
