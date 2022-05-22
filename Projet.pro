@@ -23,12 +23,14 @@ TARGET 	  = PROJET ASTEROIDES
 SOURCES += main.cpp myglwidget.cpp \
     asteroide.cpp \
     galaxy.cpp \
-    station.cpp
+    station.cpp \
+    vaisseau.cpp
 HEADERS += \
     asteroide.h \
     galaxy.h \
     myglwidget.h \
-    station.h
+    station.h \
+    vaisseau.h
 
 RESOURCES += \
     res/textures.qrc
