@@ -10,14 +10,28 @@ class Station
 public:
     Station();
     ~Station();
-    void Initialise();
+
+    void Initialise(float, float, float);
+
+    // fonction permettant la rotation de la station
     void rotation();
-    // Mise en place de la texture
-    void setTexture(GLuint tex);
+
+    // fonction d'affichage
     void Display() const;
 
+    // getters
+    float getX(){return x;};
+    float getY(){return y;};
+    float getZ(){return z;};
+    float getRadius(){return outerRadius;};
+
 private:
-    float pos[3]={0,0,-5};
+    float x;
+    float y;
+    float z;
+    float innerRadius=4;
+    float outerRadius=5;
+
     float sphereRadius = 2;
     float cylinderLength = 8;
     float angle=0;

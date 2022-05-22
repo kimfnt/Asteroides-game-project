@@ -19,21 +19,27 @@ public:
     // Initialisation de l'asteroide
     void Initialise();
 
-    // Mise en place de la texture
-    void setTexture(GLuint tex);
-
     // incrémentation de la rotation
     void rotation();
 
     // Methode d'affichage
     void Display() const;
 
+    // getters
+    float getX(){return x;};
+    float getY(){return y;};
+    float getZ(){return z;};
+    float getRadius(){return size;};
+
 private:
     float sizeAvailable[8]={0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.25};
     float size;
-
     // Coordonnées de l'emplacement de l'astéroide
-    float pos[3]={0,0,0};
+    float x=0;
+    float y=0;
+    float z=0;
+
+    // valeurs pour le spawn
     float low=-10.0;
     float high=10.0;
 
@@ -41,6 +47,7 @@ private:
     float rot=0;
     float angle=0;
     float vitesse=0;
+
     GLUquadric * m_Asteroide { nullptr };
     GLuint tex_asteroide;
 };
