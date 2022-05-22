@@ -7,6 +7,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include <opencv2/objdetect/objdetect.hpp>
 #include "myglwidget.h"
+#include <mutex>
+#include <thread>
+#include "endgamedialog.h"
 
 #include <cstdio>
 #include <iostream>
@@ -33,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     cap.set(3, 1280);
     cap.set(4, 720);
 
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
     chrono=new QElapsedTimer();
     chrono->start();
     connect(timer,SIGNAL(timeout()),this,SLOT(displayWebcam()));
@@ -41,11 +44,52 @@ MainWindow::MainWindow(QWidget *parent) :
     timer->start(20);
 
     connect(this, SIGNAL(asteroidsChange(int)), ui->glWidget, SLOT(asteroidsChange(int)));
+    connect(ui->glWidget, SIGNAL(endOfGame(bool)), this, SLOT(openEndOfGameDialog(bool)));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+/**
+ * function that listens to key press and computes
+ * movement of the space ship
+ * @brief MainWindow::keyPressEvent
+ * @param event key pressed
+ */
+void MainWindow::keyPressEvent(QKeyEvent* event){
+    switch(event->key()){
+    default: {
+        event->ignore();
+        return;
+    }
+    case Qt::Key_D: {
+        ui->glWidget->computeMovement(0);
+        break;
+    }
+    case Qt::Key_Q: {
+        ui->glWidget->computeMovement(1);
+        break;
+    }
+    case Qt::Key_I: {
+        ui->glWidget->computeMovement(2);
+        break;
+    }
+    case Qt::Key_K: {
+        ui->glWidget->computeMovement(3);
+        break;
+    }
+    case Qt::Key_Z: {
+        ui->glWidget->computeMovement(4);
+        break;
+    }
+    case Qt::Key_S: {
+        ui->glWidget->computeMovement(5);
+        break;
+    }
+    }
+    event->accept();
 }
 
 
@@ -54,22 +98,22 @@ MainWindow::~MainWindow()
  */
 void MainWindow::displayWebcam()
 {
-        Mat frame;
-        Mat frameGray;
-        vector<Rect> hands;  
-        cap >> frame; // get frame
+    Mat frame;
+    Mat frameGray;
+    vector<Rect> hands;
+    cap >> frame; // get frame
 
-        flip(frame, frame, 1); // mirror reverse
+    flip(frame, frame, 1); // mirror reverse
 
-        cvtColor(frame, frameGray, COLOR_BGR2GRAY); // convert to gray
+    cvtColor(frame, frameGray, COLOR_BGR2GRAY); // convert to gray
 
-        // display in frame
-        Mat frameToDisplay;
-        frame.copyTo(frameToDisplay);
-        QImage qImage(frameToDisplay.data, frameToDisplay.cols, frameToDisplay.rows, frameToDisplay.step, QImage::Format_BGR888);
-        QPixmap qPix=QPixmap::fromImage(qImage);
-        ui->camera->setPixmap(qPix.scaled(width/2, height/2, Qt::KeepAspectRatio));
-        //ui->camera->setPixmap(qPix);
+    // display in frame
+    Mat frameToDisplay;
+    frame.copyTo(frameToDisplay);
+    QImage qImage(frameToDisplay.data, frameToDisplay.cols, frameToDisplay.rows, frameToDisplay.step, QImage::Format_BGR888);
+    QPixmap qPix=QPixmap::fromImage(qImage);
+    ui->camera->setPixmap(qPix.scaled(width/2, height/2, Qt::KeepAspectRatio));
+    //ui->camera->setPixmap(qPix);
 
 
 
@@ -94,24 +138,51 @@ void MainWindow::displayWebcam()
  */
 void MainWindow::displayTimer()
 {
-    QString time;
     if(chrono->elapsed()/1000==60){
         minutes+=1;
         chrono->restart();
     }
     if(minutes!=0){
-       time=QString::number(minutes)+" min "+QString::number(chrono->elapsed()/1000)+" s";
+        time=QString::number(minutes)+" min "+QString::number(chrono->elapsed()/1000)+" s";
     }else{
         time=QString::number(chrono->elapsed()/1000)+" s";
     }
     ui->timerLabel->setText("Timer : "+time);
 }
 
-
-
+/**
+ * slot that closes window to go back to menu window
+ */
 void MainWindow::on_quitButton_clicked()
 {
     this->close();
     emit openMenuWindow();
 }
 
+/**
+ * slot that stops game and open end of game dialog
+ * @param result of the game
+ */
+void MainWindow::openEndOfGameDialog(bool result)
+{
+    timer->stop();
+
+    bool gameWon=result;
+    QString message, title;
+    if(gameWon){
+        message=QString("You arrived safe and sound at the space station.");
+        title=QString("Success!");
+    }else{
+        message=QString("Your space ship collided into an asteroid and you are now lost in outer space...");
+        title=QString("Game Over");
+    }
+    QString score=QString("Your time : "+ time);
+
+    EndGameDialog dialog(title, message, score, this);
+    int code = dialog.exec();
+
+    if(code==0 || code == 1){
+        this->close();
+        emit openMenuWindow();
+    }
+}

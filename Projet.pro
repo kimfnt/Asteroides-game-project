@@ -19,24 +19,29 @@ TARGET 	  = PROJET ASTEROIDES
 
 SOURCES += \
     asteroide.cpp \
+    endgamedialog.cpp \
     galaxy.cpp \
     main.cpp \
     mainwindow.cpp \
     menuwindow.cpp \
     myglwidget.cpp \
     settingsdialog.cpp \
-    station.cpp
+    station.cpp \
+    vaisseau.cpp
 
 HEADERS += \
     asteroide.h \
+    endgamedialog.h \
     galaxy.h \
     mainwindow.h \
     menuwindow.h \
     myglwidget.h \
     settingsdialog.h \
-    station.h
+    station.h \
+    vaisseau.h
 
 FORMS += \
+    endgamedialog.ui \
     mainwindow.ui \
     menuwindow.ui \
     settingsdialog.ui

@@ -21,15 +21,18 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void keyPressEvent(QKeyEvent* event);
 
 signals:
     void openMenuWindow();
     void asteroidsChange(int);
+//    void endOfGame();
 
 private slots:
     void displayWebcam();
     void displayTimer();
     void on_quitButton_clicked();
+    void openEndOfGameDialog(bool);
 
 private:
     Ui::MainWindow *ui;
@@ -37,6 +40,9 @@ private:
     cv::CascadeClassifier hand_cascade;
     QLabel * webcamFrame=nullptr;
     QElapsedTimer *chrono;
+    QTimer *timer;
+    QString time;
+    bool result=true;
     int minutes=0;
     int height;
     int width;
