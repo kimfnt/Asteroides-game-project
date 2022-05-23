@@ -32,7 +32,7 @@ public:
     float getRadius(){return size;};
 
 private:
-    float sizeAvailable[8]={0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.25};
+    float sizeAvailable[8]={0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5};
     float size;
     // Coordonnées de l'emplacement de l'astéroide
     float x=0;
@@ -40,8 +40,12 @@ private:
     float z=0;
 
     // valeurs pour le spawn
-    float low=-10.0;
-    float high=10.0;
+    float low_x=-5.0;
+    float high_x=5.0;
+    float low_y=-5.0;
+    float high_y=5.0;
+    float low_z=-20.0;
+    float high_z=10.0;
 
     // rotation
     float rot=0;

@@ -17,7 +17,6 @@ public:
     // Constructeur
     MyGLWidget(QWidget *parent = nullptr);
 
-    void keyPressEvent(QKeyEvent* event);
     void computeMovement(int);
 
 protected:
@@ -31,7 +30,7 @@ protected:
     void paintGL();
 
     // Fonction de gestion d'interactions clavier
-
+    void keyPressEvent(QKeyEvent* event);
 
     // fonction pour détecter la collision du vaisseau avec un objet
     void checkCollision();
@@ -58,11 +57,7 @@ private:
     float placement = 0;
     float m_TimeElapsed { 0.0f };
     QTimer m_AnimationTimer;
-    int move_ = 0;
-    int rot_ = 0;
-    float x;
-    float r;
-    GLfloat vaisseauPos[3] = {0.0, 0.0, 10.0};
+    GLfloat vaisseauPos[3] = {0.0, 2.0, 13.0};
     GLfloat cameraFront[3] = {0.0, 0.0, -1.0};
     GLfloat cameraUp[3] = {0.0, 1.0, 0.0};
     GLfloat cameraRight[3];
@@ -70,6 +65,10 @@ private:
     GLfloat norm;
     GLfloat pitch = 0;
     GLfloat yaw = -90;
+
+    int state=0;
+    int previous_state=0;
+    float vitesse = 0.5;
 };
 
 #endif // MYGLWIDGET_H

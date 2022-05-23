@@ -35,12 +35,12 @@ void Asteroide::Initialise()
     m_Asteroide=gluNewQuadric();
 
     // choix de la taille de l'asteroide à partir des tailles disponibles
-    size=sizeAvailable[rand()%5];
+    size=sizeAvailable[rand()%8];
 
     // détermination de la localisation de l'asteroide
-    x=low + ((float)rand()) * (float)(high - low) / RAND_MAX;
-    y=low + ((float)rand()) * (float)(high - low) / RAND_MAX;
-    z=low + ((float)rand()) * (float)(high - low) / RAND_MAX;
+    x=low_x + ((float)rand()) * (float)(high_x - low_x) / RAND_MAX;
+    y=low_y + ((float)rand()) * (float)(high_y - low_y) / RAND_MAX;
+    z=low_z + ((float)rand()) * (float)(high_z - low_z) / RAND_MAX;
 
     // détermination d'un angle de rotation entre -45 et 45
     angle=-45. + ((float)rand()) * (float)(45. - (-45.)) / RAND_MAX;

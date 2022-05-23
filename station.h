@@ -11,7 +11,7 @@ public:
     Station();
     ~Station();
 
-    void Initialise(float, float, float);
+    void Initialise();
 
     // fonction permettant la rotation de la station
     void rotation();
@@ -31,6 +31,11 @@ private:
     float z;
     float innerRadius=4;
     float outerRadius=5;
+
+    float low_x=-3.0;
+    float high_x=3.0;
+    float low_y=-3.0;
+    float high_y=3.0;
 
     float sphereRadius = 2;
     float cylinderLength = 8;

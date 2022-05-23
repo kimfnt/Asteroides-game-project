@@ -113,7 +113,6 @@ void MainWindow::displayWebcam()
     QImage qImage(frameToDisplay.data, frameToDisplay.cols, frameToDisplay.rows, frameToDisplay.step, QImage::Format_BGR888);
     QPixmap qPix=QPixmap::fromImage(qImage);
     ui->camera->setPixmap(qPix.scaled(width/2, height/2, Qt::KeepAspectRatio));
-    //ui->camera->setPixmap(qPix);
 
 
 

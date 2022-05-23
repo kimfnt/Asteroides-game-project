@@ -41,7 +41,7 @@ void MyGLWidget::initializeGL()
 
     // création de la station spatiale
     maStation=new Station();
-    maStation->Initialise(10,0,-10);
+    maStation->Initialise();
 
     // création des astéroides
     mesAsteroides = new Asteroide[nombre];
@@ -55,8 +55,6 @@ void MyGLWidget::initializeGL()
 
     // création du vaisseau spatial
     monVaisseau=new Vaisseau();
-    x = 0;
-    r = 0;
 }
 
 // Fonction de redimensionnement
@@ -85,21 +83,15 @@ void MyGLWidget::paintGL()
     // Definition de la position de la camera
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //gluLookAt(0.0f, 4.f, 4.f, 0.0f, 0.0f, 0.f, 0.0f, 1.0f, 0.0f);
+
     gluLookAt(vaisseauPos[0]-cameraFront[0],vaisseauPos[1]-cameraFront[1],vaisseauPos[2]-cameraFront[2],
             vaisseauPos[0],vaisseauPos[1],vaisseauPos[2],
             cameraUp[0],cameraUp[1],cameraUp[2]);
 
-    //glDisable(GL_LIGHTING); // on désactive le lighting pour dessiner la route
-
-    //glEnable(GL_LIGHTING); // on réactive le lighting par la suite
-
-
-    // translation des éléments suivants (voiture, roues, phares) sur l'axe x
-    //glTranslatef(placement, 0.f, 0.f);
-
     // on affiche la galaxy
     myGalaxy->Display();
+    myGalaxy->rotation();
+
 
     // on affiche la station spatiale
     float x=maStation->getX();
@@ -124,15 +116,39 @@ void MyGLWidget::paintGL()
         mesAsteroides[i].rotation();
     }
 
+    glEnable(GL_LIGHTING);
+    //Lumière
+    GLfloat light_tab[] = {1.0, 1.0, 0.0, 0.0};
+    GLfloat lum_ambiante[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat lum_diffuse[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat lum_speculaire[] = {1.0, 1.0, 1.0, 1.0};
+    glLightfv(GL_LIGHT0, GL_POSITION, light_tab);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lum_ambiante);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lum_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lum_speculaire);
+    glEnable(GL_LIGHT0);
     //Placer le vaisseau
     glTranslatef(vaisseauPos[0],vaisseauPos[1],vaisseauPos[2]);
-    glRotatef(-yaw-90,0.0,1.0,0.0);
+    glRotatef(-yaw-90,cameraUp[0],cameraUp[1],cameraUp[2]);
     glRotatef(pitch+10,1.0,0.0,0.0);
     glScaled(0.05,0.05,0.05);
     glPushMatrix();
     monVaisseau->Display(0);
     glPopMatrix();
+    glDisable(GL_LIGHTING);
 
+    //    qDebug() << vaisseauPos[0] << vaisseauPos[1] << vaisseauPos[2];
+    if (state == previous_state)
+    {
+        if (vitesse <= 4){
+            vitesse += 0.5;
+        }
+    } else {
+        vitesse = 0.5;
+    }
+    previous_state = state;
+
+    // We check collisions
     if(end==false)
         checkCollision();
 }
@@ -155,103 +171,38 @@ void MyGLWidget::keyPressEvent(QKeyEvent * event)
     }
     case Qt::Key_D:
     {
-        qDebug() <<"droite";
-        //        add[0]=cameraFront[1]*cameraUp[2]-cameraFront[2]*cameraUp[1];
-        //        add[1]=cameraFront[2]*cameraUp[0]-cameraFront[0]*cameraUp[2];
-        //        add[2]=cameraFront[0]*cameraUp[1]-cameraFront[1]*cameraUp[0];
-        //        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
-        //        cameraPos[0] += add[0]/norm;
-        //        cameraPos[1] += add[1]/norm;
-        //        cameraPos[2] += add[2]/norm;
-        yaw += 5;
-        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
-        add[1] = sin(pitch*3.14/180);
-        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
-        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
-        cameraFront[0] = add[0]/norm;
-        cameraFront[1] = add[1]/norm;
-        cameraFront[2] = add[2]/norm;
+        computeMovement(0);
         break;
     }
     case Qt::Key_Q:
     {
-        qDebug() <<"gauche";
-        //        add[0]=cameraFront[1]*cameraUp[2]-cameraFront[2]*cameraUp[1];
-        //        add[1]=cameraFront[2]*cameraUp[0]-cameraFront[0]*cameraUp[2];
-        //        add[2]=cameraFront[0]*cameraUp[1]-cameraFront[1]*cameraUp[0];
-        //        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
-        //        cameraPos[0] -= add[0]/norm;
-        //        cameraPos[1] -= add[1]/norm;
-        //        cameraPos[2] -= add[2]/norm;
-        yaw -= 5;
-        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
-        add[1] = sin(pitch*3.14/180);
-        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
-        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
-        cameraFront[0] = add[0]/norm;
-        cameraFront[1] = add[1]/norm;
-        cameraFront[2] = add[2]/norm;
+        computeMovement(1);
         break;
     }
     case Qt::Key_I:
     {
-        qDebug() <<"go";
-        vaisseauPos[0] += cameraFront[0];
-        vaisseauPos[1] += cameraFront[1];
-        vaisseauPos[2] += cameraFront[2];
+        computeMovement(2);
         break;
     }
     case Qt::Key_K:
     {
-        qDebug() <<"back";
-        vaisseauPos[0] -= cameraFront[0];
-        vaisseauPos[1] -= cameraFront[1];
-        vaisseauPos[2] -= cameraFront[2];
+        computeMovement(3);
         break;
     }
     case Qt::Key_Z:
     {
-        qDebug() <<"up";
-        pitch += 5;
-        if(pitch > 89.0f){
-            pitch = 89.0f;
-        }
-        if(pitch < -89.0f){
-            pitch = -89.0f;
-        }
-        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
-        add[1] = sin(pitch*3.14/180);
-        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
-        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
-        cameraFront[0] = add[0]/norm;
-        cameraFront[1] = add[1]/norm;
-        cameraFront[2] = add[2]/norm;
+        computeMovement(4);
         break;
     }
     case Qt::Key_S:
     {
-        qDebug() <<"down";
-        pitch -= 5;
-        if(pitch > 89.0f){
-            pitch = 89.0f;
-        }
-        if(pitch < -89.0f){
-            pitch = -89.0f;
-        }
-        add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
-        add[1] = sin(pitch*3.14/180);
-        add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
-        norm = sqrt(add[0]*add[0]+add[1]*add[1]+add[2]*add[2]);
-        cameraFront[0] = add[0]/norm;
-        cameraFront[1] = add[1]/norm;
-        cameraFront[2] = add[2]/norm;
+        computeMovement(5);
         break;
     }
     }
 
     // Acceptation de l'evenement et mise a jour de la scene
     event->accept();
-    update();
 }
 
 
@@ -270,7 +221,8 @@ void MyGLWidget::computeMovement(int move)
     case 0:
     {
         qDebug() <<"droite";
-        yaw += 5;
+        state = 1;
+        yaw += 0.5*vitesse;
         add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
         add[1] = sin(pitch*3.14/180);
         add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
@@ -283,7 +235,8 @@ void MyGLWidget::computeMovement(int move)
     case 1:
     {
         qDebug() <<"gauche";
-        yaw -= 5;
+        state = 2;
+        yaw -= 0.5*vitesse;
         add[0] = cos(yaw*3.14/180)*cos(pitch*3.14/180);
         add[1] = sin(pitch*3.14/180);
         add[2] = sin(yaw*3.14/180)*cos(pitch*3.14/180);
@@ -295,24 +248,39 @@ void MyGLWidget::computeMovement(int move)
     }
     case 2:
     {
-        qDebug() <<"go";
-        vaisseauPos[0] += cameraFront[0];
-        vaisseauPos[1] += cameraFront[1];
-        vaisseauPos[2] += cameraFront[2];
+        state = 3;
+        if(vaisseauPos[0]+cameraFront[0]>10 || vaisseauPos[0]+cameraFront[0]<-10 ||
+                vaisseauPos[1]+cameraFront[1]>10 || vaisseauPos[1]+cameraFront[1]<-10 ||
+                vaisseauPos[2]+cameraFront[2]>13 || vaisseauPos[2]+cameraFront[2]<-25){
+            qDebug() <<"limite";
+        } else {
+            vaisseauPos[0] += cameraFront[0]*vitesse/8;
+            vaisseauPos[1] += cameraFront[1]*vitesse/8;
+            vaisseauPos[2] += cameraFront[2]*vitesse/8;
+            qDebug() <<"go";
+        }
         break;
     }
     case 3:
     {
-        qDebug() <<"back";
-        vaisseauPos[0] -= cameraFront[0];
-        vaisseauPos[1] -= cameraFront[1];
-        vaisseauPos[2] -= cameraFront[2];
+        state = 4;
+        if(vaisseauPos[0]-cameraFront[0]>10 || vaisseauPos[0]-cameraFront[0]<-10 ||
+                vaisseauPos[1]-cameraFront[1]>10 || vaisseauPos[1]-cameraFront[1]<-10 ||
+                vaisseauPos[2]-cameraFront[2]>13 || vaisseauPos[2]-cameraFront[2]<-25){
+            qDebug() <<"limite";
+        } else {
+            vaisseauPos[0] -= cameraFront[0]*vitesse/8;
+            vaisseauPos[1] -= cameraFront[1]*vitesse/8;
+            vaisseauPos[2] -= cameraFront[2]*vitesse/8;
+            qDebug() <<"back";
+        }
         break;
     }
     case 4:
     {
         qDebug() <<"up";
-        pitch += 5;
+        state = 5;
+        pitch += 0.5*vitesse;
         if(pitch > 89.0f){
             pitch = 89.0f;
         }
@@ -331,7 +299,8 @@ void MyGLWidget::computeMovement(int move)
     case 5:
     {
         qDebug() <<"down";
-        pitch -= 5;
+        state = 6;
+        pitch -= 0.5*vitesse;
         if(pitch > 89.0f){
             pitch = 89.0f;
         }
@@ -403,7 +372,7 @@ void MyGLWidget::checkCollision()
     float distZ=vaisseauPos[2]-this->maStation->getZ();
 
     float dist = sqrt(distX*distX+distY*distY+distZ*distZ);
-    float radiusOne=0.275;
+    float radiusOne=0.25;
     float radiusTwo=this->maStation->getRadius();
 
     if(dist <= (radiusOne+radiusTwo)){

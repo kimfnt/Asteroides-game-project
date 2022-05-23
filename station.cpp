@@ -25,17 +25,16 @@ Station::~Station()
         gluDeleteQuadric(m_Cylindres);
 }
 
-void Station::Initialise(float tempx, float tempy, float tempz)
+void Station::Initialise()
 {
     // création de la quadrique pour la sphère
     m_Sphere=gluNewQuadric();
     // création de la quadrique pour les cylindres
     m_Cylindres=gluNewQuadric();
 
-    x=tempx;
-    y=tempy;
-    z=tempz;
-    outerRadius=5;
+    x=low_x + ((float)rand()) * (float)(high_x - low_x) / RAND_MAX;
+    y=low_y + ((float)rand()) * (float)(high_y - low_y) / RAND_MAX;
+    z=-20;
 }
 
 void Station::rotation()
@@ -51,19 +50,33 @@ void Station::Display() const
     glBindTexture(GL_TEXTURE_2D, tex_logo);
 
     glPushMatrix();
+    // TODO
     glRotatef(90, 1, 0, 0);
     glRotatef(angle, 0, 0, -1);
 
     gluQuadricDrawStyle(m_Sphere, GLU_FILL);
     gluQuadricTexture(m_Sphere, GLU_TRUE);
     gluSphere(m_Sphere, sphereRadius, 20, 20);
-    //gluQuadricDrawStyle(m_Sphere, GLU_LINE);
-    //gluSphere(m_Sphere, outerRadius, 20, 20);
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
 
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    //def des variables pour effet chrome
+    GLfloat ambiante[] = {0.09225, 0.09225, 0.09225, 1.0};
+    GLfloat diffuse[] = {0.20724, 0.20724, 0.20724, 1.0};
+    GLfloat speculaire[] = {0.408273, 0.408273, 0.408273, 1.0};
+    GLfloat emission[] = {0.0, 0.0, 0.0, 1.0};
+    float shininess = 0.4f;
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambiante);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, speculaire);
+    glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+    glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+
     // croix de cylindres
-    glColor3f(0,0.9,0);
     glPushMatrix();
     glRotatef(angle, 0,1,0);
     glTranslatef(-cylinderLength/2, 0.0f, 0.0f);
@@ -71,7 +84,6 @@ void Station::Display() const
     gluCylinder(m_Cylindres, 0.25, 0.25, cylinderLength, 32, 32);
     glPopMatrix();
 
-    glColor3f(0,0,0.9);
     glPushMatrix();
     glRotatef(angle, 0,1,0);
     glTranslatef(0.f, 0.f, -cylinderLength/2);
@@ -79,17 +91,19 @@ void Station::Display() const
     glPopMatrix();
 
     // le disque supérieur
-    glColor3f(0.45,0.45,0.45);
-    //    gluQuadricDrawStyle(m_Cylindres, GLU_LINE);
     glPushMatrix();
     glRotatef(angle, 0,1,0);
     glTranslatef(0.f, 0.3f, 0.0f);
     glRotated(90.0, 1.,0 , 0.);
+    gluQuadricOrientation(m_Cylindres, GLU_INSIDE);
+    gluCylinder(m_Cylindres, innerRadius,innerRadius,0.6,28,2);//Cylindre interieur
+    gluQuadricOrientation(m_Cylindres, GLU_OUTSIDE);
+    gluCylinder(m_Cylindres, outerRadius,outerRadius,0.6,28,2);//Cylindre exterieur
+    glRotatef(180,0,1,0);
     gluDisk(m_Cylindres, innerRadius, outerRadius, 28, 2);
     glPopMatrix();
 
     // le disque inférieur
-    //    gluQuadricDrawStyle(m_Cylindres, GLU_LINE);
     glPushMatrix();
     glRotatef(angle, 0,1,0);
     glTranslatef(0.f, -0.3f, 0.0f);
@@ -97,40 +111,43 @@ void Station::Display() const
     gluDisk(m_Cylindres, innerRadius, outerRadius, 28, 2);
     glPopMatrix();
 
-    float miniAngle=(360.0*M_PI)/(28.0*180);
-    float miniLength;
+    glDisable(GL_LIGHTING);
 
-    // cote interieur
-    glColor3f(0.35,0.35,0.35);
-    float x0=0;
-    float z0=innerRadius;
+//    float miniAngle=(360.0*M_PI)/(28.0*180);
+//    float miniLength;
+
+//    // cote interieur
+//    glColor3f(0.35,0.35,0.35);
+//    float x0=0;
+//    float z0=innerRadius;
 
 
-    float tempX,tempZ;
-    glPushMatrix();
-    glRotatef(angle, 0,1,0);
-    glBegin(GL_QUAD_STRIP);
-    for(int i=0; i<29;i++){
-        miniLength=sqrt(2*innerRadius*innerRadius*(1-cos((i)*miniAngle)));
-        tempX=x0+miniLength*cos((i)*miniAngle/2);
-        tempZ=z0-miniLength*sin((i)*miniAngle/2);
-        glVertex3f(tempX,-0.3,tempZ);
-        glVertex3f(tempX,0.3,tempZ);
-    }
-    glEnd();
+//    float tempX,tempZ;
+//    glPushMatrix();
+//    glRotatef(angle, 0,1,0);
+//    glBegin(GL_QUAD_STRIP);
+//    for(int i=0; i<29;i++){
+//        miniLength=sqrt(2*innerRadius*innerRadius*(1-cos((i)*miniAngle)));
+//        tempX=x0+miniLength*cos((i)*miniAngle/2);
+//        tempZ=z0-miniLength*sin((i)*miniAngle/2);
+//        glVertex3f(tempX,-0.3,tempZ);
+//        glVertex3f(tempX,0.3,tempZ);
+//    }
+//    glEnd();
 
-    // cote exterieur
-    x0=0;
-    z0=outerRadius;
-    glBegin(GL_QUAD_STRIP);
-    for(int i=0; i<29;i++){
-        miniLength=sqrt(2*outerRadius*outerRadius*(1-cos((i)*miniAngle)));
-        tempX=x0+miniLength*cos((i)*miniAngle/2);
-        tempZ=z0-miniLength*sin((i)*miniAngle/2);
-        glVertex3f(tempX,-0.3,tempZ);
-        glVertex3f(tempX,0.3,tempZ);
-    }
-    glEnd();
+//    // cote exterieur
+//    x0=0;
+//    z0=outerRadius;
+//    glBegin(GL_QUAD_STRIP);
+//    for(int i=0; i<29;i++){
+//        miniLength=sqrt(2*outerRadius*outerRadius*(1-cos((i)*miniAngle)));
+//        tempX=x0+miniLength*cos((i)*miniAngle/2);
+//        tempZ=z0-miniLength*sin((i)*miniAngle/2);
+//        glVertex3f(tempX,-0.3,tempZ);
+//        glVertex3f(tempX,0.3,tempZ);
+//    }
+//    glEnd();
+
     glPopMatrix();
     glColor3f(1,1,1);
 }

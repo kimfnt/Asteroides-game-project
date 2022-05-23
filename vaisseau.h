@@ -11,6 +11,8 @@ public:
     ~Vaisseau();
 
     void Display(uint64_t iTimeElapsed) const;
+
+private:
     GLUquadric* quad;
 };
 
