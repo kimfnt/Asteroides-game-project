@@ -22,7 +22,6 @@ MenuWindow::~MenuWindow()
 void MenuWindow::on_playButton_clicked()
 {
     gameWindow = new MainWindow();
-    //gameWindow->setNumber(numberAsteroids);
     emit gameWindow->asteroidsChange(numberAsteroids);
 
     connect(gameWindow, &MainWindow::openMenuWindow, this, &MenuWindow::show);

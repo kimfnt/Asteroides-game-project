@@ -38,6 +38,7 @@ private:
     Ui::MainWindow *ui;
     cv::VideoCapture cap;
     cv::CascadeClassifier hand_cascade;
+    cv::CascadeClassifier palm_cascade;
     QLabel * webcamFrame=nullptr;
     QElapsedTimer *chrono;
     QTimer *timer;

@@ -33,15 +33,31 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->quitButton->move(width-160, height-140);
 
     cap=VideoCapture(0);
-    cap.set(3, 1280);
-    cap.set(4, 720);
+    cap.set(CAP_PROP_FRAME_WIDTH,1280);
+    cap.set(CAP_PROP_FRAME_HEIGHT,720);
+
+    if(!cap.isOpened())  // check if we succeeded
+    {
+        cerr<<"Error openning the default camera"<<endl;
+    }
+
+    if(!hand_cascade.load("C:/Users/Kim/Documents/COURS/SEMESTRE8/BIBLIOTHEQUES MULTIMEDIA/PROJET/Projet/res/closed_frontal_palm.xml")) {
+        cerr << "Error loading haarcascade" << endl;
+        exit(0);
+    }
+
+    if(!palm_cascade.load("C:/Users/Kim/Documents/COURS/SEMESTRE8/BIBLIOTHEQUES MULTIMEDIA/PROJET/Projet/res/open_frontal_palm.xml")) {
+        cerr << "Error loading haarcascade" << endl;
+        exit(0);
+    }
+
 
     timer = new QTimer(this);
     chrono=new QElapsedTimer();
     chrono->start();
     connect(timer,SIGNAL(timeout()),this,SLOT(displayWebcam()));
     connect(timer,SIGNAL(timeout()),this,SLOT(displayTimer()));
-    timer->start(20);
+    timer->start(100);
 
     connect(this, SIGNAL(asteroidsChange(int)), ui->glWidget, SLOT(asteroidsChange(int)));
     connect(ui->glWidget, SIGNAL(endOfGame(bool)), this, SLOT(openEndOfGameDialog(bool)));
@@ -98,14 +114,55 @@ void MainWindow::keyPressEvent(QKeyEvent* event){
  */
 void MainWindow::displayWebcam()
 {
-    Mat frame;
-    Mat frameGray;
-    vector<Rect> hands;
+    Mat frame, frame_gray;
+    vector<Rect> fists, palms;
+
     cap >> frame; // get frame
+    flip(frame, frame, 1); // mirror effect
+    cvtColor(frame, frame_gray, COLOR_BGR2GRAY); // convert to gray
 
-    flip(frame, frame, 1); // mirror reverse
+    Point p1(0,360), p2(1280, 360), p3(640, 0) , p4(640, 720);
+    line(frame, p1, p2, Scalar(128,128,128), 2);
+    line(frame, p3, p4, Scalar(128,128,128), 2);
+    Point p5(440,260), p6(840,460);
+    rectangle(frame,p5, p6,Scalar(255,0,0),2);
 
-    cvtColor(frame, frameGray, COLOR_BGR2GRAY); // convert to gray
+    //-- Detect fists
+    hand_cascade.detectMultiScale( frame_gray, fists, 1.1, 4, 0|CASCADE_SCALE_IMAGE, Size(60, 60) );
+    palm_cascade.detectMultiScale( frame_gray, palms, 1.1, 4, 0|CASCADE_SCALE_IMAGE, Size(60, 60) );
+    if (fists.size()==2)
+    {
+        // Draw green rectangle
+        for (int i=0;i<(int)fists.size();i++){
+            rectangle(frame,fists[i],Scalar(0,255,0),2);
+        }
+
+        if(fists[0].x< 640/2 && fists[0].y>480/2 && fists[1].x>640/2 && fists[1].y<480/2){
+            qDebug()<<"gauche";
+            ui->glWidget->computeMovement(1);
+        }else if(fists[0].x< 640/2 && fists[0].y<480/2 && fists[1].x>640/2 && fists[1].y>480/2){
+            qDebug()<<"droite";
+            ui->glWidget->computeMovement(0);
+        }
+        else if(fists[0].y<480/2 && fists[1].y<480/2){
+            qDebug()<<"haut";
+            ui->glWidget->computeMovement(4);
+        }else if(fists[0].y> 480/2 && fists[1].y>480/2){
+            qDebug()<<"bas";
+            ui->glWidget->computeMovement(5);
+        }
+
+        fists.clear();
+    } else if(palms.size()==2){
+        for (int i=0;i<(int)palms.size();i++){
+            rectangle(frame,palms[i],Scalar(0,255,255),2);
+        }
+        if(440<palms[0].x<840 && 260<palms[0].y<460 && 440<palms[1].x<840 && 260<palms[1].y<460){
+            qDebug()<<"avancer";
+            ui->glWidget->computeMovement(2);
+        }
+    }
+
 
     // display in frame
     Mat frameToDisplay;
@@ -113,22 +170,6 @@ void MainWindow::displayWebcam()
     QImage qImage(frameToDisplay.data, frameToDisplay.cols, frameToDisplay.rows, frameToDisplay.step, QImage::Format_BGR888);
     QPixmap qPix=QPixmap::fromImage(qImage);
     ui->camera->setPixmap(qPix.scaled(width/2, height/2, Qt::KeepAspectRatio));
-
-
-
-    //    hand_cascade.detectMultiScale(frameGray, hands, 1.1, 4, 0, Size(60,60)); // hands detection
-    //    if(hands.size()>0 && hands.size()<3){
-
-    //        // draw green rectangles
-    //        for (int i=0;i<(int)hands.size();i++)
-    //            rectangle(frame,hands[i],Scalar(0,255,0),2);
-    //    }
-
-
-
-
-
-
 }
 
 

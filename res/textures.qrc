@@ -4,11 +4,14 @@
         <file>logo.png</file>
         <file>background.png</file>
         <file>background3.jpg</file>
-	<file>tex1.jpg</file>
+        <file>tex1.jpg</file>
         <file>tex2.jpg</file>
-	<file>neptune.jpg</file>
-	<file>soleil.jpg</file>
-	<file>tex_galaxy.jpg</file>
-	<file>logoTSE.jpg</file>
+        <file>neptune.jpg</file>
+        <file>soleil.jpg</file>
+        <file>tex_galaxy.jpg</file>
+        <file>logoTSE.jpg</file>
+    </qresource>
+    <qresource prefix="/xml">
+        <file>closed_frontal_palm.xml</file>
     </qresource>
 </RCC>
