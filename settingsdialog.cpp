@@ -23,12 +23,19 @@ SettingsDialog::~SettingsDialog()
     delete ui;
 }
 
+/**
+ * slots that defines what is done when the apply button is clicked
+ * @brief SettingsDialog::on_applyButton_clicked
+ */
 void SettingsDialog::on_applyButton_clicked()
 {
     accept();
 }
 
-
+/**
+ * slot that defines what is done when the cancel button is clicked
+ * @brief SettingsDialog::on_cancelButton_clicked
+ */
 void SettingsDialog::on_cancelButton_clicked()
 {
     reject();

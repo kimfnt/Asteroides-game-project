@@ -11,7 +11,4 @@
         <file>tex_galaxy.jpg</file>
         <file>logoTSE.jpg</file>
     </qresource>
-    <qresource prefix="/xml">
-        <file>closed_frontal_palm.xml</file>
-    </qresource>
 </RCC>

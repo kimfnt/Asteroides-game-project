@@ -11,6 +11,7 @@ public:
     Station();
     ~Station();
 
+    // fonction d'initialisation
     void Initialise();
 
     // fonction permettant la rotation de la station
@@ -26,23 +27,35 @@ public:
     float getRadius(){return outerRadius;};
 
 private:
+    // coordonnees de la station
     float x;
     float y;
     float z;
-    float innerRadius=4;
     float outerRadius=5;
 
+    // valeurs pour le spawn
     float low_x=-3.0;
     float high_x=3.0;
     float low_y=-3.0;
     float high_y=3.0;
 
-    float sphereRadius = 2;
-    float cylinderLength = 8;
-    float angle=0;
-    GLUquadric * m_Sphere = nullptr;
-    GLUquadric * m_Cylindres { nullptr };
+    float rot=0;
+    GLUquadric * m_Station;
     GLuint tex_logo;
+
+    //def des variables pour effet chrome
+    GLfloat a_l[4] = {0, 0, 0, 1.0};
+    GLfloat d_l[4] = {0, 0, 0, 1.0};
+    GLfloat s_l[4] = {0, 0, 0, 1.0};
+
+    float sh_l = 0.4f;
+
+    //def des variables pour effet chrome
+    GLfloat a_p[4] = {0, 0, 0, 1.0};
+    GLfloat d_p[4] = {0.01, 0.01, 0.01, 1.0};
+    GLfloat s_p[4] = {0, 0, 0, 1.0};
+    GLfloat e_p[4] = {0, 0, 0, 1.0};
+    float sh_p = 0.f;
 };
 
 #endif // STATION_H

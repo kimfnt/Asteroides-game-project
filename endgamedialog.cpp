@@ -20,6 +20,11 @@ EndGameDialog::~EndGameDialog()
     delete ui;
 }
 
+
+/**
+ * slot when quit button is clicked
+ * @brief EndGameDialog::on_pushButton_clicked
+ */
 void EndGameDialog::on_pushButton_clicked()
 {
     accept();

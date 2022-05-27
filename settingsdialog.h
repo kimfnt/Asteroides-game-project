@@ -18,7 +18,6 @@ public:
 
 private slots:
     void on_applyButton_clicked();
-
     void on_cancelButton_clicked();
 
 private:

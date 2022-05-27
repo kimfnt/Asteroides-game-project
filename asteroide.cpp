@@ -4,7 +4,7 @@
 
 Asteroide::Asteroide()
 {
-    // Conversion de l'image en un format attendu par les fonctions OpenGL
+    // On récupère l'image pour la texture de l'astéroide
     QImage image(":/tex2.jpg");
     image=image.convertToFormat(QImage::Format_RGBA8888);
     glGenTextures(1, &tex_asteroide);
@@ -51,7 +51,6 @@ void Asteroide::Initialise()
         if(vitesse<=-0.5 || vitesse >=0.5)
             break;
     }
-
 }
 
 /**

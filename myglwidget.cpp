@@ -23,8 +23,16 @@ MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
         update();
     });
 
-    m_AnimationTimer.setInterval(20);
+    m_AnimationTimer.setInterval(50);
     m_AnimationTimer.start();
+}
+
+MyGLWidget::~MyGLWidget()
+{
+    delete myGalaxy;
+    delete maStation;
+    delete mesAsteroides;
+    delete monVaisseau;
 }
 
 // Fonction d'initialisation
@@ -133,7 +141,7 @@ void MyGLWidget::paintGL()
     glRotatef(pitch+10,1.0,0.0,0.0);
     glScaled(0.05,0.05,0.05);
     glPushMatrix();
-    monVaisseau->Display(0);
+    monVaisseau->Display();
     glPopMatrix();
     glDisable(GL_LIGHTING);
 

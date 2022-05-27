@@ -17,6 +17,7 @@ MenuWindow::MenuWindow(QWidget *parent)
 MenuWindow::~MenuWindow()
 {
     delete ui;
+    delete gameWindow;
 }
 
 void MenuWindow::on_playButton_clicked()

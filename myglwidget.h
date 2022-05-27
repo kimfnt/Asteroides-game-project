@@ -14,10 +14,17 @@ class MyGLWidget : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    // Constructeur
-    MyGLWidget(QWidget *parent = nullptr);
+    MyGLWidget(QWidget *parent = nullptr);    
+    ~MyGLWidget();
 
+    // fonction pour déplacer le vaisseau dans la scène
     void computeMovement(int);
+
+    // fonction pour détecter la collision du vaisseau avec un objet
+    void checkCollision();
+
+    // fonction pour vérifier que les asteroides ne se chevauchent
+    bool overlap(Asteroide*, int);
 
 protected:
     // Fonction d'initialisation
@@ -32,11 +39,6 @@ protected:
     // Fonction de gestion d'interactions clavier
     void keyPressEvent(QKeyEvent* event);
 
-    // fonction pour détecter la collision du vaisseau avec un objet
-    void checkCollision();
-
-    // fonction pour vérifier que les asteroides ne se chevauchent
-    bool overlap(Asteroide*, int);
 
 signals:
     void endOfGame(bool);
@@ -51,7 +53,6 @@ private:
     Vaisseau* monVaisseau=nullptr;
 
     bool end=false;
-
     int nombre = 16;
 
     float placement = 0;
@@ -60,7 +61,6 @@ private:
     GLfloat vaisseauPos[3] = {0.0, 2.0, 13.0};
     GLfloat cameraFront[3] = {0.0, 0.0, -1.0};
     GLfloat cameraUp[3] = {0.0, 1.0, 0.0};
-    GLfloat cameraRight[3];
     GLfloat add[3];
     GLfloat norm;
     GLfloat pitch = 0;

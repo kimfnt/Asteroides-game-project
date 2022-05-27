@@ -45,6 +45,10 @@ Galaxy::~Galaxy()
         gluDeleteQuadric(m_Galaxy);
 }
 
+/**
+ * function to display elements
+ * @brief Galaxy::Display
+ */
 void Galaxy::Display() const
 {
     // on active la texture 2D

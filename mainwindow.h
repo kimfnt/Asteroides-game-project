@@ -8,8 +8,6 @@
 #include <opencv2/objdetect.hpp>
 #include <QElapsedTimer>
 
-//using namespace cv;
-
 namespace Ui {
 class MainWindow;
 }
@@ -26,7 +24,6 @@ public:
 signals:
     void openMenuWindow();
     void asteroidsChange(int);
-//    void endOfGame();
 
 private slots:
     void displayWebcam();
@@ -43,7 +40,6 @@ private:
     QElapsedTimer *chrono;
     QTimer *timer;
     QString time;
-    bool result=true;
     int minutes=0;
     int height;
     int width;

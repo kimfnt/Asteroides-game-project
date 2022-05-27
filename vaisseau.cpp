@@ -2,15 +2,19 @@
 
 Vaisseau::Vaisseau()
 {
-    quad = gluNewQuadric();
+    m_Vaisseau = gluNewQuadric();
 }
 
 Vaisseau::~Vaisseau()
 {
-    gluDeleteQuadric(quad);
+    gluDeleteQuadric(m_Vaisseau);
 }
 
-void Vaisseau::Display(uint64_t iTimeElapsed) const{
+/**
+ * function to display space ship
+ * @brief Vaisseau::Display
+ */
+void Vaisseau::Display() const{
 
     //def des variables pour effet chrome
     GLfloat chrome_ambiante[] = {0.25, 0.25, 0.25, 1.0};
@@ -35,20 +39,20 @@ void Vaisseau::Display(uint64_t iTimeElapsed) const{
     glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 
     //corps
-    gluQuadricDrawStyle(quad, GLU_FILL);
-    gluCylinder(quad, 1.2, 1.2, 6, 10, 10);
+    gluQuadricDrawStyle(m_Vaisseau, GLU_FILL);
+    gluCylinder(m_Vaisseau, 1.2, 1.2, 6, 10, 10);
     // base, haut, hauteur
 
     //pointe
     glPushMatrix();
     glTranslatef(0.f,0.f,-5.f);
-    gluCylinder(quad, 0, 1.2, 5,10, 10);
+    gluCylinder(m_Vaisseau, 0, 1.2, 5,10, 10);
     glPopMatrix();
 
     //base
     glPushMatrix();
     glTranslatef(0.f,0.f,6.f);
-    gluDisk(quad, 0, 1.2, 10, 10);
+    gluDisk(m_Vaisseau, 0, 1.2, 10, 10);
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_noir_ambiante);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_noir_diffuse);
@@ -57,7 +61,7 @@ void Vaisseau::Display(uint64_t iTimeElapsed) const{
     glMaterialf(GL_FRONT, GL_SHININESS, shininess3);
 
     glTranslatef(0.f,0.f,0.01f);
-    gluDisk(quad,1.15,1.2,10,10);
+    gluDisk(m_Vaisseau,1.15,1.2,10,10);
     glPopMatrix();
 
 
@@ -65,33 +69,33 @@ void Vaisseau::Display(uint64_t iTimeElapsed) const{
     //pot
     glPushMatrix();
     glTranslatef(0.6f,0.6f,5.f);
-    gluCylinder(quad, 0.6, 0.65, 1.4, 10, 10);
+    gluCylinder(m_Vaisseau, 0.6, 0.65, 1.4, 10, 10);
 
-    gluDisk(quad,0,0.6,10,10);
+    gluDisk(m_Vaisseau,0,0.6,10,10);
     glTranslatef(0.f,0.f,1.4f);
-    gluDisk(quad,0,0.65,10,10);
+    gluDisk(m_Vaisseau,0,0.65,10,10);
     glTranslatef(0.f,0.f,-1.4f);
 
 
     glTranslatef(-1.2f,0.f,0.f);
-    gluCylinder(quad, 0.6, 0.65, 1.4, 10, 10);
-    gluDisk(quad,0,0.6,10,10);
+    gluCylinder(m_Vaisseau, 0.6, 0.65, 1.4, 10, 10);
+    gluDisk(m_Vaisseau,0,0.6,10,10);
     glTranslatef(0.f,0.f,1.4f);
-    gluDisk(quad,0,0.65,10,10);
+    gluDisk(m_Vaisseau,0,0.65,10,10);
     glTranslatef(0.f,0.f,-1.4f);
 
     glTranslatef(0.f,-1.2f,0.f);
-    gluCylinder(quad, 0.6, 0.65, 1.4, 10, 10);
-    gluDisk(quad,0,0.6,10,10);
+    gluCylinder(m_Vaisseau, 0.6, 0.65, 1.4, 10, 10);
+    gluDisk(m_Vaisseau,0,0.6,10,10);
     glTranslatef(0.f,0.f,1.4f);
-    gluDisk(quad,0,0.65,10,10);
+    gluDisk(m_Vaisseau,0,0.65,10,10);
     glTranslatef(0.f,0.f,-1.4f);
 
     glTranslatef(1.2f,0.f,0.f);
-    gluCylinder(quad, 0.6, 0.65, 1.4, 10, 10);
-    gluDisk(quad,0,0.6,10,10);
+    gluCylinder(m_Vaisseau, 0.6, 0.65, 1.4, 10, 10);
+    gluDisk(m_Vaisseau,0,0.6,10,10);
     glTranslatef(0.f,0.f,1.4f);
-    gluDisk(quad,0,0.65,10,10);
+    gluDisk(m_Vaisseau,0,0.65,10,10);
     glTranslatef(0.f,0.f,-1.4f);
     glPopMatrix();
 

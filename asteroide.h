@@ -10,7 +10,7 @@
 class Asteroide
 {
 public:
-    // Constructeur avec parametres
+    // Constructeur
     Asteroide();
 
     // Destructeur
@@ -32,12 +32,14 @@ public:
     float getRadius(){return size;};
 
 private:
-    float sizeAvailable[8]={0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5};
-    float size;
     // Coordonnées de l'emplacement de l'astéroide
     float x=0;
     float y=0;
     float z=0;
+
+    // taille de l'asteroide
+    float sizeAvailable[8]={0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5};
+    float size;
 
     // valeurs pour le spawn
     float low_x=-5.0;
@@ -52,7 +54,7 @@ private:
     float angle=0;
     float vitesse=0;
 
-    GLUquadric * m_Asteroide { nullptr };
+    GLUquadric *m_Asteroide;
     GLuint tex_asteroide;
 };
 

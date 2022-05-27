@@ -41,12 +41,12 @@ MainWindow::MainWindow(QWidget *parent) :
         cerr<<"Error openning the default camera"<<endl;
     }
 
-    if(!hand_cascade.load("C:/Users/Kim/Documents/COURS/SEMESTRE8/BIBLIOTHEQUES MULTIMEDIA/PROJET/Projet/res/closed_frontal_palm.xml")) {
+    if(!hand_cascade.load("../projet-bdm-asteroides/res/closed_frontal_palm.xml")) {
         cerr << "Error loading haarcascade" << endl;
         exit(0);
     }
 
-    if(!palm_cascade.load("C:/Users/Kim/Documents/COURS/SEMESTRE8/BIBLIOTHEQUES MULTIMEDIA/PROJET/Projet/res/open_frontal_palm.xml")) {
+    if(!palm_cascade.load("../projet-bdm-asteroides/res/open_frontal_palm.xml")) {
         cerr << "Error loading haarcascade" << endl;
         exit(0);
     }
@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete chrono;
+    delete timer;
+    delete webcamFrame;
 }
 
 /**
@@ -125,7 +128,10 @@ void MainWindow::displayWebcam()
     line(frame, p1, p2, Scalar(128,128,128), 2);
     line(frame, p3, p4, Scalar(128,128,128), 2);
     Point p5(440,260), p6(840,460);
-    rectangle(frame,p5, p6,Scalar(255,0,0),2);
+    //rectangle(frame,p5, p6,Scalar(255,0,0),2);
+    Point p7(0,280), p8(1280,280), p9(0,440), p10(1280,440);
+    line(frame, p7, p8, Scalar(180,180,180), 2);
+    line(frame, p9, p10, Scalar(180,180,180), 2);
 
     //-- Detect fists
     hand_cascade.detectMultiScale( frame_gray, fists, 1.1, 4, 0|CASCADE_SCALE_IMAGE, Size(60, 60) );
@@ -147,17 +153,18 @@ void MainWindow::displayWebcam()
         else if(fists[0].y<480/2 && fists[1].y<480/2){
             qDebug()<<"haut";
             ui->glWidget->computeMovement(4);
-        }else if(fists[0].y> 480/2 && fists[1].y>480/2){
+        }else if(fists[0].y> 480/2 + 120 && fists[1].y>480/2 + 120){
             qDebug()<<"bas";
             ui->glWidget->computeMovement(5);
+        }else if(fists[0].y>480/2 && fists[0].y<480/2+120 && fists[1].y>480/2 && fists[1].y<480/2+120){
+            qDebug()<<"neutre";
+            //ui->glWidget->computeMovement(5);
         }
-
-        fists.clear();
     } else if(palms.size()==2){
         for (int i=0;i<(int)palms.size();i++){
             rectangle(frame,palms[i],Scalar(0,255,255),2);
         }
-        if(440<palms[0].x<840 && 260<palms[0].y<460 && 440<palms[1].x<840 && 260<palms[1].y<460){
+        if(260<palms[0].y && palms[0].y<460 && 260<palms[1].y && palms[1].y<460){
             qDebug()<<"avancer";
             ui->glWidget->computeMovement(2);
         }

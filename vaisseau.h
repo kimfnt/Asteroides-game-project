@@ -10,10 +10,11 @@ public:
     Vaisseau();
     ~Vaisseau();
 
-    void Display(uint64_t iTimeElapsed) const;
+    // fonction d'affichage
+    void Display() const;
 
 private:
-    GLUquadric* quad;
+    GLUquadric* m_Vaisseau;
 };
 
 #endif // VAISSEAU_H
