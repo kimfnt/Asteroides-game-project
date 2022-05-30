@@ -54,9 +54,7 @@ private:
 
     bool end=false;
     int nombre = 16;
-
-    float placement = 0;
-    float m_TimeElapsed { 0.0f };
+    
     QTimer m_AnimationTimer;
     GLfloat vaisseauPos[3] = {0.0, 2.0, 13.0};
     GLfloat cameraFront[3] = {0.0, 0.0, -1.0};
