@@ -8,9 +8,6 @@
 
 MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 {
-    // Reglage de la taille/position
-    //setFixedSize(810, 780);
-
     QRect  screenGeometry= QGuiApplication::primaryScreen()->geometry();
     int height = screenGeometry.height();
     int width = screenGeometry.width();
@@ -19,7 +16,6 @@ MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 
     // Connexion du timer
     connect(&m_AnimationTimer,  &QTimer::timeout, [&] {
-        m_TimeElapsed += 1.0f;
         update();
     });
 
@@ -135,6 +131,7 @@ void MyGLWidget::paintGL()
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lum_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, lum_speculaire);
     glEnable(GL_LIGHT0);
+
     //Placer le vaisseau
     glTranslatef(vaisseauPos[0],vaisseauPos[1],vaisseauPos[2]);
     glRotatef(-yaw-90,cameraUp[0],cameraUp[1],cameraUp[2]);
@@ -145,7 +142,6 @@ void MyGLWidget::paintGL()
     glPopMatrix();
     glDisable(GL_LIGHTING);
 
-    //    qDebug() << vaisseauPos[0] << vaisseauPos[1] << vaisseauPos[2];
     if (state == previous_state)
     {
         if (vitesse <= 4){
