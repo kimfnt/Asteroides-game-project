@@ -7,8 +7,6 @@
 #include "opencv2/highgui/highgui.hpp"
 #include <opencv2/objdetect/objdetect.hpp>
 #include "myglwidget.h"
-#include <mutex>
-#include <thread>
 #include "endgamedialog.h"
 
 #include <cstdio>
